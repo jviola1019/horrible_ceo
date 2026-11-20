@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');const read=f=>fs.readFileSync(path.join(root,f),'utf8');
+test('project Pages uses relative assets',()=>{let h=read('index.html');assert.match(h,/src="src\/app\.js"/);assert.match(h,/href="styles\.css"/);assert.doesNotMatch(h,/(?:src|href)="\/(?!\/)/);});
+test('manifest resolves all PWA icons',()=>{let m=JSON.parse(read('manifest.webmanifest'));assert.equal(m.scope,'./');assert.equal(m.start_url,'./index.html');for(const i of m.icons)assert.ok(fs.statSync(path.join(root,i.src)).size>500);});
+test('offline cache does not delete other applications',()=>{const s=read('sw.js');assert.match(s,/key\.startsWith\(PREFIX\)/);assert.match(s,/url\.pathname\.startsWith\(scopePath\)/);assert.match(s,/request\.mode==='navigate'/);});
+test('no external runtime scripts and fonts',()=>{const h=read('index.html');assert.doesNotMatch(h,/<script[^>]+src="https?:/);assert.doesNotMatch(h,/<link[^>]+href="https?:/);});

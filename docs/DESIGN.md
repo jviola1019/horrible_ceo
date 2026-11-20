@@ -1,0 +1,4 @@
+# Visual identity and interaction
+Horrible Industries is an eccentric mid-century annual report, **not** a generic corporate dashboard. Deep evergreen (#172426 / #172a2c), cream (#f3f0e7), ivory (#fffdf7), faded mint (#b4e0b0), amber (#ebbc79) and risk red (#c05b55). Editorial Georgia headings, functional Courier New finance labels, dependable system sans-serif UI; original vector cityscape and corporate crest. The desktop application uses a vertical navigation rail and multi-column executive layout. The phone edition uses a single-column reading hierarchy and fixed five-item bottom navigation with safe-area spacing. No third-party fonts, runtime scripts or external graphics.
+
+**Screens:** executive desk / market intelligence / financial ledger / product laboratory / boardroom. Mobile layout and basic keyboard focus styles are implemented. Physical-device Safari and full WCAG audits are not yet verified.

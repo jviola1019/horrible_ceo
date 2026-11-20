@@ -1,43 +1,52 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
-
+name: Validate and deploy Horrible Industries
 on:
-  # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+    branches: [main]
   workflow_dispatch:
-
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
   contents: read
   pages: write
   id-token: write
-
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
 concurrency:
-  group: "pages"
+  group: github-pages
   cancel-in-progress: false
-
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout game source
         uses: actions/checkout@v4
-      - name: Setup Pages
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Unit and accounting tests
+        run: npm test
+      - name: Monte Carlo model audit
+        run: npm run audit
+      - name: Build standalone and hosted editions
+        run: npm run build
+      - name: Install Chromium for browser smoke tests
+        run: |
+          python3 -m pip install playwright==1.56.0
+          python3 -m playwright install --with-deps chromium
+      - name: Desktop and phone browser smoke tests
+        run: npm run test:browser
+        env:
+          REQUIRE_HOSTED_TEST: '1'
+      - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
-      - name: Upload artifact
+      - name: Upload verified site only
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
-      - name: Deploy to GitHub Pages
+          path: ./dist
+      - name: Deploy verified site
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4

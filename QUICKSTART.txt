@@ -1,0 +1,5 @@
+HORRIBLE INDUSTRIES
+
+PC: Open play.html.
+iPhone: Deploy to GitHub Pages; use Safari > Share > Add to Home Screen.
+Test: npm test; npm run audit; npm run build; npm run test:browser.
