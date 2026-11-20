@@ -46,7 +46,7 @@ try:
    if hosted:
     page.reload(wait_until='networkidle')
     assert 'Q2' in page.locator('.topline').inner_text() or '2 / 12' in page.locator('.topline').inner_text()
-    page.evaluate('navigator.serviceWorker.ready')
+    page.evaluate("Promise.race([navigator.serviceWorker.ready, new Promise((_,reject)=>setTimeout(()=>reject(new Error('Service worker did not activate within 10 seconds')),10000))])")
     ctx.set_offline(True);page.reload(wait_until='domcontentloaded')
     assert page.locator('.topline').count()==1;ctx.set_offline(False)
    assert not errs,errs
