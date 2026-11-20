@@ -3,3 +3,5 @@ test('project Pages uses relative assets',()=>{let h=read('index.html');assert.m
 test('manifest resolves all PWA icons',()=>{let m=JSON.parse(read('manifest.webmanifest'));assert.equal(m.scope,'./');assert.equal(m.start_url,'./index.html');for(const i of m.icons)assert.ok(fs.statSync(path.join(root,i.src)).size>500);});
 test('offline cache does not delete other applications',()=>{const s=read('sw.js');assert.match(s,/key\.startsWith\(PREFIX\)/);assert.match(s,/url\.pathname\.startsWith\(scopePath\)/);assert.match(s,/request\.mode==='navigate'/);});
 test('no external runtime scripts and fonts',()=>{const h=read('index.html');assert.doesNotMatch(h,/<script[^>]+src="https?:/);assert.doesNotMatch(h,/<link[^>]+href="https?:/);});
+
+test('hosted entry registers the offline worker',()=>{const app=read('src/app.js');assert.match(app,/serviceWorker\.register\('\.\/sw\.js'\)/);});

@@ -63,3 +63,6 @@ app.addEventListener('input',e=>{if(e.target.dataset.field==='price'){decision.p
 }});
 app.addEventListener('change',async e=>{if(e.target.dataset.field==='price')setDecision('price',e.target.value);if(e.target.dataset.field==='factory')setDecision('factory',e.target.checked);if(e.target.id==='saveInput'&&e.target.files?.[0]){try{const imported=await importGame(e.target.files[0]);state=imported;decision=defaultDecisions();persistenceOk=saveGame(state);page='dashboard';notice='Saved game imported successfully.';render();}catch(err){notice=err.message;render();}}});
 render();
+
+// PWA registration is only enabled for secure/localhost hosted editions.
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'))navigator.serviceWorker.register('./sw.js').catch(()=>{});
