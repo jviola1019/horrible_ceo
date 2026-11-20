@@ -5,6 +5,7 @@ from threading import Thread
 from http.server import ThreadingHTTPServer,SimpleHTTPRequestHandler
 from playwright.sync_api import sync_playwright
 import os
+import shutil
 ROOT=Path(__file__).resolve().parents[1]
 server=ThreadingHTTPServer(('127.0.0.1',0),partial(SimpleHTTPRequestHandler,directory=str(ROOT)))
 Thread(target=server.serve_forever,daemon=True).start()
@@ -12,7 +13,8 @@ url=f'http://127.0.0.1:{server.server_port}/'
 try:
  with sync_playwright() as p:
   kw={'headless':True}
-  if os.path.isfile('/usr/bin/chromium'):kw.update(executable_path='/usr/bin/chromium',args=['--no-sandbox'])
+  chrome=shutil.which('google-chrome') or shutil.which('chromium') or shutil.which('chromium-browser')
+  if chrome:kw.update(executable_path=chrome,args=['--no-sandbox'])
   browser=p.chromium.launch(**kw)
   for label,viewport in [('desktop',{'width':1440,'height':900}),('iphone',{'width':390,'height':844})]:
    ctx=browser.new_context(viewport=viewport,accept_downloads=True);page=ctx.new_page();page.set_default_timeout(12000);errs=[]
